@@ -1,75 +1,80 @@
 version: "3.9"
 
 services:
-  node1:
+  node1: # Master 01
     image: ubuntu:24.04
-    container_name: node01
+    container_name: master01
     hostname: node01
     ports:
-      - "8481:8480"
-      - "9871:9870"
-      - "8081:8088"
-    command: sleep infinity
+      - "8481:8480" # JournalNode 1
+      - "9871:9870" # NameNode 1 (Active)
+      - "8081:8088" # ResourceManager 1 (Active)
+    command: ["/shared/scripts/start-services.sh"]
     volumes:
-      - ./shared:/shared
+      - ./shared:/shared # Contains staging area for data, config and scripts
+      - ./mnt/node01:/mnt/node-data # Node-specific data
     networks:
       - cluster-network
+    env_file:
+      - ./shared/env/hadoop.env
 
-  node2:
+  node2: # Master 02
     image: ubuntu:24.04
-    container_name: node02
+    container_name: master02
     hostname: node02
     ports:
-      - "8482:8480"
-      - "9872:9870"
-      - "8082:8088"
-    command: sleep infinity
+      - "8482:8480" # JournalNode 2
+      - "9872:9870" # NameNode 2 (Standby)
+      - "8082:8088" # ResourceManager 2 (Standby)
+    command: ["/shared/scripts/start-services.sh"]
     volumes:
-      - ./shared:/shared
+      - ./shared:/shared # Contains staging area for data, config and scripts
+      - ./mnt/node02:/mnt/node-data # Node-specific data
     networks:
       - cluster-network
+    env_file:
+      - ./shared/env/hadoop.env
 
-  node3:
+  node3: # Worker 1 - JournalNode 3 + ZooKeeper tiebreaker
     image: ubuntu:24.04
-    container_name: node03
+    container_name: worker01
     hostname: node03
     ports:
-      - "8483:8480"
-      - "9873:9870"
-      - "8083:8088"
-    command: sleep infinity
+      - "8483:8480" # JournalNode 3
+    command: ["/shared/scripts/start-services.sh"]
     volumes:
-      - ./shared:/shared
+      - ./shared:/shared # Contains staging area for data, config and scripts
+      - ./mnt/node03:/mnt/node-data # Node-specific data
     networks:
       - cluster-network
+    env_file:
+      - ./shared/env/hadoop.env
 
-  node4:
+  node4: # Worker 2 - Pure DataNode/NodeManager
     image: ubuntu:24.04
-    container_name: node04
+    container_name: worker02
     hostname: node04
-    ports:
-      - "8484:8480"
-      - "9874:9870"
-      - "8084:8088"
-    command: sleep infinity
+    command: ["/shared/scripts/start-services.sh"]
     volumes:
-      - ./shared:/shared
+      - ./shared:/shared # Contains staging area for data, config and scripts
+      - ./mnt/node04:/mnt/node-data # Node-specific data
     networks:
       - cluster-network
+    env_file:
+      - ./shared/env/hadoop.env
 
-  node5:
+  node5: # Worker 3 - Pure DataNode/NodeManager
     image: ubuntu:24.04
-    container_name: node05
+    container_name: worker03
     hostname: node05
-    ports:
-      - "8485:8480"
-      - "9875:9870"
-      - "8085:8088"
-    command: sleep infinity
+    command: ["/shared/scripts/start-services.sh"]
     volumes:
-      - ./shared:/shared
+      - ./shared:/shared # Contains staging area for data, config and scripts
+      - ./mnt/node05:/mnt/node-data # Node-specific data
     networks:
       - cluster-network
+    env_file:
+      - ./shared/env/hadoop.env
 
 networks:
   cluster-network:

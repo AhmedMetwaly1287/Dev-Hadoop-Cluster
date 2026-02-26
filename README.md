@@ -31,6 +31,39 @@
 ---
 
 ## High Level Architecture
+- node01 — Master A
+
+NameNode (Active)
+ResourceManager (Active)
+JournalNode
+ZooKeeper
+ZKFC
+
+- node02 — Master B
+
+NameNode (Standby)
+ResourceManager (Standby)
+JournalNode
+ZooKeeper
+ZKFC
+
+- node03 — Worker + Quorum Tiebreaker
+
+DataNode
+NodeManager
+JournalNode
+ZooKeeper
+
+- node04 — Pure Worker
+
+DataNode
+NodeManager
+
+- node05 — Pure Worker
+
+DataNode
+NodeManager
+
 - IMAGE PLACEHOLDER
 
 ---
