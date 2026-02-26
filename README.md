@@ -24,47 +24,26 @@
 ## Requirements
 - This section is going to demonstrate the **functional** and **non-functional** requirements of the project.
 ### Functional Requirements
-- PLACEHOLDER
+1. This cluster should be able to run Hadoop on all Nodes, with each Node running specific services (refer to **Design Choices section** for more).
+2. This cluster should implement HDFS HA by running two NameNodes (Active and Standby states) and a quorum of JournalNodes, as well as enabling ZooKeeper and ZooKeeper Automatic Failover Controller to make the failover process entirely automatic.
+3. This cluster should implement YARN HA by running two ResourceManagers (Active and Standby states) and a quorum of ZooKeeper nodes for automatic failover.
+4. This cluster should be able to handle all HDFS processes and requests normally.
+5. All files stored on this cluster are subject to a replication factor of 1.
+6. This cluster should be able to run all MapReduce jobs submitted to process data stored on HDFS.
+7. This cluster exposes a web interface for all services to allow for monitoring.
 ### Non-Functional Requirements
-- PLACEHOLDER
+1. The system shall maintain cluster availability in case of single-node failure affecting NameNodes and ResourceManagers, ensuring that no service is a single point of failure.
+2. The system shall ensure metadata consistency between Active and Standby NameNodes using Quorum Journal Manager.
+3. The cluster shall recover automatically from service failure without requiring full cluster restart.
+4. The cluster deployment shall be reproducible using Docker Compose on any compatible Linux machine.
+5. Cluster configuration files shall be organized and documented to allow easy modification and troubleshooting.
+6. The architecture shall allow adding additional DataNodes without major architectural changes.
+
 
 ---
 
 ## High Level Architecture
-- node01 — Master A
-
-NameNode (Active)
-ResourceManager (Active)
-JournalNode
-ZooKeeper
-ZKFC
-
-- node02 — Master B
-
-NameNode (Standby)
-ResourceManager (Standby)
-JournalNode
-ZooKeeper
-ZKFC
-
-- node03 — Worker + Quorum Tiebreaker
-
-DataNode
-NodeManager
-JournalNode
-ZooKeeper
-
-- node04 — Pure Worker
-
-DataNode
-NodeManager
-
-- node05 — Pure Worker
-
-DataNode
-NodeManager
-
-- IMAGE PLACEHOLDER
+![High Level Architecture](./documentation/HadoopDevHLA.drawio.png)
 
 ---
 
