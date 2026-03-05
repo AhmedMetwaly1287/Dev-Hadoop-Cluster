@@ -52,6 +52,16 @@
       <value>node02:8088</value>
   </property>
 
+  <property>
+    <name>yarn.resourcemanager.address.rm1</name>
+    <value>node01:8032</value>
+  </property>
+
+  <property>
+    <name>yarn.resourcemanager.address.rm2</name>
+    <value>node02:8032</value>
+  </property>
+
 <!-- HA Configurations -->
   <property>
     <name>yarn.resourcemanager.ha.enabled</name>
@@ -65,14 +75,10 @@
 
 <!-- Recovery Enabled for both NM and RM -->
   <property>
-    <name>yarn.nodemanager.recovery.enabled</name>
-    <value>true</value>
-  </property>
-
-  <property>
     <name>yarn.resourcemanager.recovery.enabled</name>
     <value>true</value>
   </property>
+
 
 <!-- Tells YARN where to store the RM state, by default uses ZK with HA enabled -->
   <property> 
