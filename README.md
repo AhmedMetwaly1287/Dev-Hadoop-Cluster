@@ -73,7 +73,23 @@
 
 - In this section, we outline the key architectural decisions made and discuss the reasoning behind them. Each choice reflects a balance between **reliability**, **performance**, and **resource constraints** within our environment. We also highlight the trade-offs that were necessary — for example, opting for **high availability mechanisms** that increase complexity but ensure resilience, or setting replication factors that conserve storage while impacting redundancy.
 
-- The cluster consists of **5 nodes**, we have opted for a **2 master - 3 worker architecture**, where each master is also running a **JournalNode** in addition to a **ZooKeeper node**, one of the workers was also chosen to run the last JournalNode and ZooKeeper node in addition to the **DataNode** and **NodeManager** it'd normally be running. This architecture was chosen to conform with **Hadoop and YARN HA**, where if one of the masters crashed, the cluster is expected to behave normally with **zero downtime** due to automatic failover controlled by the **ZooKeeper Failover Controller (ZKFC)**, which continuously monitors the NameNode's health and holds a lock on the **Active NameNode**. Upon failure, this lock is released and switched over to the **Standby NameNode**, as well as the majority of the **JournalNode** and **ZooKeeper quorum** nodes continuing to run, ensuring recovery of the failing JournalNode by **synchronizing edit logs** after recovery. In the case of the failure of **both masters**, the cluster halts due to the unavailability of **NameNodes** and **ResourceManagers** to elect — however it is worth noting that the **JournalNode and ZooKeeper quorum remain intact** since node03 still holds the third node of each quorum. The reason why the cluster is running **3 JournalNodes** and **3 ZooKeeper nodes** is because the system can only afford **(n-1)/2** failures where **n** is the number of nodes — opting for any less would cause total failure in the case of a single node failing, but picking **3** means our cluster can afford **1 failure**, making our system more durable. We have also opted for a **replication factor of 1**, one of the major trade-offs in the cluster where we preserve storage at the cost of risking losing access to data in the case of **DataNode failure**.
+## Design Choices and Trade-offs
+
+- In this section, we outline the key architectural decisions made and discuss the reasoning behind them. Each choice reflects a balance between **reliability**, **performance**, and **resource constraints** within our environment. We also highlight the trade-offs that were necessary — for example, opting for **high availability mechanisms** that increase complexity but ensure resilience, or setting replication factors that conserve storage while impacting redundancy.
+
+### Cluster Architecture
+- The cluster consists of **5 nodes**, we have opted for a **2 master - 3 worker architecture**, where each master is also running a **JournalNode** in addition to a **ZooKeeper node**. One of the workers was also chosen to run the last **JournalNode** and **ZooKeeper node** in addition to the **DataNode** and **NodeManager** it would normally be running.
+
+### High Availability
+- This architecture was chosen to conform with **Hadoop and YARN HA**. If one of the masters crashed, the cluster is expected to behave normally with **zero downtime** due to automatic failover controlled by the **ZooKeeper Failover Controller (ZKFC)**, which continuously monitors the **NameNode's health** and holds a lock on the **Active NameNode**. Upon failure, this lock is released and switched over to the **Standby NameNode**, as well as the majority of the **JournalNode** and **ZooKeeper quorum** nodes continuing to run, ensuring recovery of the failing JournalNode by **synchronizing edit logs** after recovery.
+
+- In the case of the failure of **both masters**, the cluster halts due to the unavailability of **NameNodes** and **ResourceManagers** to elect — however it is worth noting that the **JournalNode and ZooKeeper quorum remain intact** since **node03** still holds the third node of each quorum.
+
+### Quorum Size
+- The reason why the cluster is running **3 JournalNodes** and **3 ZooKeeper nodes** is because the system can only afford **(n-1)/2** failures where **n** is the number of nodes. Opting for any less would cause **total failure** in the case of a single node failing, but picking **3** means our cluster can afford **1 failure**, making our system more durable.
+
+### Replication Factor
+- We have also opted for a **replication factor of 1**, one of the major trade-offs in the cluster where we **preserve storage** at the cost of risking losing access to data in the case of **DataNode failure**.
 
 ---
 
