@@ -11,7 +11,7 @@ fi
 if [ ! -d "/opt/java" ]; then
     echo "Extracting Java..."
     tar -xzf /shared/microsoft-jdk-17.0.18-linux-x64.tar.gz -C /opt/
-    mv /opt/jdk-17.0.18+7 /opt/java
+    mv /opt/jdk-17.0.18+8 /opt/java
 fi
 
 
